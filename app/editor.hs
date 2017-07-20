@@ -29,16 +29,19 @@ bodyWidget :: ( DomBuilder t m
            , MonadFix m
            )
         => m ()
-bodyWidget = el "div" $ do
-  elClass "table" "table" $ do
-    el "thead" $ do
-      el "tr" $ do
-        elClass "td" "col-md-4" $ text "Key"
-        elClass "td" "col-md-6" $ text "Value"
-        elClass "td" "col-md-2" $ text "Action"
-    el "tbody" $ do
-      rowWidget "ABC" "DEF"
-      rowWidget "GHI" "JKL"
+bodyWidget = do
+  el "div" $ do
+    elAttr "h1" ("align" =: "center") $ text "JSON Editor (One Level Only)"
+  el "div" $ do
+    elClass "table" "table" $ do
+      el "thead" $ do
+        el "tr" $ do
+          elClass "td" "col-md-4" $ text "Key"
+          elClass "td" "col-md-6" $ text "Value"
+          elClass "td" "col-md-2" $ text "Action"
+      el "tbody" $ do
+        sequence $ uncurry rowWidget <$> testJSON
+        blank
 
 rowWidget :: ( DomBuilder t m
            , DomBuilderSpace m ~ GhcjsDomSpace
@@ -74,3 +77,17 @@ attrsHidden False = M.empty
 attrsAction :: Bool -> T.Text
 attrsAction True = "Edit"
 attrsAction False = "Save"
+
+-- Still use T.Text, later should use JSVal
+testJSON :: [(T.Text, T.Text)]
+testJSON = [ ("defaultScale", "0.1")
+           , ("defaultHeight", "30")
+           , ("evaluationCellSize", "1.23")
+           , ("defaultBlockColor", "#9C27B0")
+           , ("defaultActiveColor", "#FF5722")
+           , ("defaultStaticColor", "#607D8B")
+           , ("defaultLineColor", "#795548")
+           , ("hiddenProperties", "[\"height\", \"aike\", \"viewColor\"]")
+           , ("mapZoomLevel", "19")
+           , ("useMapLayer", "true")
+           ]
